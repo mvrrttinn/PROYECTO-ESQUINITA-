@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>La Esquinita - POS System</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <div class="cat-icon" onclick="fetchMenu('All')">🏠</div>
+        <div class="cat-icon" onclick="renderMenu('Empanadas')">🥟</div>
+        <div class="cat-icon" onclick="renderMenu('Promos')">🌭</div>
+        <div class="cat-icon" onclick="renderMenu('Papas')">🍟</div>
+        <div class="cat-icon" onclick="renderMenu('Chorrillanas')">🍳</div>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>La Esquinita</h1>
+            <p id="status" style="color: var(--success)">● Sistema Activo</p>
+        </div>
+        <div class="grid-productos" id="grid"></div>
+    </div>
+
+    <div class="order-panel">
+        <div class="order-header">PEDIDO LA ESQUINITA</div>
+        <div class="order-items" id="lista-orden"></div>
+        <div class="order-footer">
+            <h2 style="display:flex; justify-content:space-between">Total: <span id="total">$0</span></h2>
+            <button class="btn-confirmar" onclick="guardarEnSQL()">SOLO GUARDAR (SQL)</button>
+            <button class="btn-whatsapp" onclick="enviarWhatsApp()">
+                <span>📲</span> ENVIAR PEDIDO POR WHATSAPP
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let db_productos = [];
+        let carrito = [];
+        const WHATSAPP_NUMBER = "56991754264"; // Número de La Esquinita
+
+        async function fetchMenu() {
+            try {
+                const res = await fetch('http://localhost:5000/api/productos');
+                db_productos = await res.json();
+                renderMenu('All');
+            } catch (e) {
+                document.getElementById('status').innerText = "● Error de Conexión";
+                document.getElementById('status').style.color = "red";
+            }
+        }
+
+        function renderMenu(cat) {
+            const grid = document.getElementById('grid');
+            grid.innerHTML = "";
+            const filtrados = cat === 'All' ? db_productos : db_productos.filter(p => p.categoria === cat);
+            
+            filtrados.forEach(p => {
+                grid.innerHTML += `
+                    <div class="card" onclick="agregar(${p.id_producto})">
+                        <div class="emoji">🍔</div>
+                        <h3>${p.nombre}</h3>
+                        <div class="price">$${p.precio}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function agregar(id) {
+            const p = db_productos.find(prod => prod.id_producto === id);
+            const nota = prompt(`¿Notas para ${p.nombre}?`, "Sin cebolla");
+            carrito.push({...p, nota: nota || "Normal"});
+            actualizarUI();
+        }
+
+        function actualizarUI() {
+            const lista = document.getElementById('lista-orden');
+            let total = 0;
+            lista.innerHTML = "";
+            carrito.forEach((item, index) => {
+                total += parseFloat(item.precio);
+                lista.innerHTML += `
+                    <div class="item-row">
+                        <div><strong>${item.nombre}</strong> <span>$${item.precio}</span></div>
+                        <small>Nota: ${item.nota}</small>
+                    </div>
+                `;
+            });
+            document.getElementById('total').innerText = `$${total}`;
+        }
+
+        // --- FUNCIÓN ESTRELLA: WHATSAPP REDIRECT ---
+        function enviarWhatsApp() {
+            if(carrito.length === 0) return alert("Carrito vacío");
+
+            let mensaje = "¡Hola La Esquinita! 🍔\nQuiero realizar el siguiente pedido:\n\n";
+            carrito.forEach(i => {
+                mensaje += `• *${i.nombre}* (${i.nota})\n`;
+            });
+            mensaje += `\n*Total a pagar: ${document.getElementById('total').innerText}*`;
+            mensaje += `\n\n_Pedido generado por Sistema Web_`;
+
+            const url = `https://wa.me/${WHATSAPP_NUMBER}?text=${encodeURIComponent(mensaje)}`;
+            
+            // Primero guardamos en SQL para que no se pierda el registro
+            guardarEnSQL(false); 
+            
+            // Redirigir a WhatsApp
+            window.open(url, '_blank');
+        }
+
+        async function guardarEnSQL(notificar = true) {
+            const total = document.getElementById('total').innerText.replace('$', '');
+            const payload = {
+                total: total,
+                metodo_pago: 'WhatsApp/Efectivo',
+                productos: carrito.map(i => ({ id: i.id_producto, cantidad: 1, notas: i.nota }))
+            };
+
+            const res = await fetch('http://localhost:5000/api/pedido', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify(payload)
+            });
+
+            if(res.ok && notificar) {
+                alert("Pedido guardado en Base de Datos.");
+                carrito = [];
+                actualizarUI();
+            }
+        }
+
+        fetchMenu();
+    </script>
+</body>
+</html>
