@@ -10,10 +10,10 @@ CORS(app)
 
 # --- CONFIGURACIÓN DE TU BASE DE DATOS ---
 DB_CONFIG = {
-    "host": "localhost",
+    "host": "localhost:3306",
     "user": "root",
-    "password": "tu_password", # <--- CAMBIA ESTO
-    "database": "la_esquinita"
+    "password": "Martin0416*", # <--- CAMBIA ESTO
+    "database": "esquinita"
 }
 
 def get_db_connection():
