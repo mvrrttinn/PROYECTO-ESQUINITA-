@@ -1,0 +1,542 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Menú completo de La Esquinita - Completos, churrascos, empanadas fritas, chorrillanas, salchipapas y mucho más. Renca, Santiago.">
+    <title>Menú | La Esquinita - Comida Rápida al Paso</title>
+
+    <!-- Bootstrap 5.3 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+
+    <!-- NAVBAR -->
+    <div id="nav-placeholder"></div>
+
+    <!-- ========== HERO MENÚ ========== -->
+    <section class="menu-hero">
+        <div class="container text-center">
+            <span class="section-badge section-badge-dark"><i class="bi bi-fire"></i> Menú Completo</span>
+            <h1 class="hero-title">Nuestro <span class="text-primary-custom">Menú</span></h1>
+            <p class="hero-description mx-auto text-center" style="color: rgba(255,255,255,0.8);">
+                Descubre todo lo que tenemos para ti. ¡Todo preparado al momento con nuestra famosa mayo casera! 🥄
+            </p>
+        </div>
+    </section>
+
+    <!-- ========== BARRA DE CATEGORÍAS (sticky) ========== -->
+    <div class="category-nav-bar" id="categoryBar">
+        <div class="container">
+            <div class="category-nav-scroll">
+                <a href="#vienesas" class="category-pill active" data-cat="vienesas">🌭 Vienesas</a>
+                <a href="#churrascos" class="category-pill" data-cat="churrascos">🍔 Churrascos</a>
+                <a href="#ass" class="category-pill" data-cat="ass">🥖 ASS</a>
+                <a href="#empanadas" class="category-pill" data-cat="empanadas">🥟 Empanadas</a>
+                <a href="#papas" class="category-pill" data-cat="papas">🍟 Papas Fritas</a>
+                <a href="#salchipapas" class="category-pill" data-cat="salchipapas">🍟🌭 Salchipapas</a>
+                <a href="#chorrillanas" class="category-pill" data-cat="chorrillanas">🫕 Chorrillanas</a>
+                <a href="#fajitas" class="category-pill" data-cat="fajitas">🫔 Fajitas</a>
+                <a href="#supremas" class="category-pill" data-cat="supremas">🧀 Supremas</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- ========== MAIN MENU CONTENT ========== -->
+    <main class="section-padding bg-light-custom" style="padding-top: 40px;">
+        <div class="container">
+
+            <!-- ==================== SECCIÓN 1: VIENESAS ==================== -->
+            <section id="vienesas" class="menu-section">
+                <div class="menu-section-header">
+                    <span class="menu-section-emoji">🌭</span>
+                    <div>
+                        <h2 class="menu-section-title">Vienesas / Hot Dogs</h2>
+                        <p class="menu-section-desc">Nuestros clásicos, perfectos para cualquier antojo</p>
+                    </div>
+                </div>
+                <div class="row g-4">
+                    <!-- Hot Dog -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-card">
+                            <div class="menu-card-body">
+                                <h5 class="menu-card-title">Hot Dog</h5>
+                                <p class="menu-card-desc">Vienesa en pan con salsas a elección</p>
+                                <div class="menu-card-sizes">
+                                    <button class="size-btn active" data-price="1200" onclick="selectSize(this)">Normal <strong>$1.200</strong></button>
+                                    <button class="size-btn" data-price="1500" onclick="selectSize(this)">XL <strong>$1.500</strong></button>
+                                </div>
+                            </div>
+                            <button class="btn btn-add-cart" onclick="addFromCard(this, 'Hot Dog', 'Vienesas')">
+                                <i class="bi bi-cart-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Completo -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-card">
+                            <div class="menu-card-body">
+                                <h5 class="menu-card-title">Completo</h5>
+                                <p class="menu-card-desc">Vienesa, tomate, palta, mayo, chucrut</p>
+                                <div class="menu-card-sizes">
+                                    <button class="size-btn active" data-price="1700" onclick="selectSize(this)">Normal <strong>$1.700</strong></button>
+                                    <button class="size-btn" data-price="2200" onclick="selectSize(this)">XL <strong>$2.200</strong></button>
+                                </div>
+                            </div>
+                            <button class="btn btn-add-cart" onclick="addFromCard(this, 'Completo', 'Vienesas')">
+                                <i class="bi bi-cart-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Italiano -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-card">
+                            <div class="menu-card-body">
+                                <h5 class="menu-card-title">Italiano</h5>
+                                <p class="menu-card-desc">Vienesa, tomate, palta, mayo</p>
+                                <div class="menu-card-sizes">
+                                    <button class="size-btn active" data-price="1700" onclick="selectSize(this)">Normal <strong>$1.700</strong></button>
+                                    <button class="size-btn" data-price="2200" onclick="selectSize(this)">XL <strong>$2.200</strong></button>
+                                </div>
+                            </div>
+                            <button class="btn btn-add-cart" onclick="addFromCard(this, 'Italiano', 'Vienesas')">
+                                <i class="bi bi-cart-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                    <!-- Dinámico -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-card">
+                            <div class="menu-card-body">
+                                <h5 class="menu-card-title">Dinámico</h5>
+                                <p class="menu-card-desc">Vienesa, tomate, palta, americana, chucrut, mayo</p>
+                                <div class="menu-card-sizes">
+                                    <button class="size-btn active" data-price="2500" onclick="selectSize(this)">Normal <strong>$2.500</strong></button>
+                                    <button class="size-btn" data-price="3000" onclick="selectSize(this)">XL <strong>$3.000</strong></button>
+                                </div>
+                            </div>
+                            <button class="btn btn-add-cart" onclick="addFromCard(this, 'Dinámico', 'Vienesas')">
+                                <i class="bi bi-cart-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                    <!-- PROMOS VIENESAS -->
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-card menu-card-promo">
+                            <span class="promo-tag">🔥 PROMO</span>
+                            <div class="menu-card-body">
+                                <h5 class="menu-card-title">3x Completos/Italianos</h5>
+                                <p class="menu-card-desc">Tamaño Normal</p>
+                                <div class="menu-card-price-single">$4.500</div>
+                            </div>
+                            <button class="btn btn-add-cart btn-add-promo" onclick="agregarAlCarrito({nombre:'Promo 3x Completo/Italiano Normal', precio:4500, cantidad:1, categoria:'Promos Vienesas'})">
+                                <i class="bi bi-cart-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-card menu-card-promo">
+                            <span class="promo-tag">🔥 PROMO</span>
+                            <div class="menu-card-body">
+                                <h5 class="menu-card-title">3x Completos/Italianos</h5>
+                                <p class="menu-card-desc">Tamaño XL</p>
+                                <div class="menu-card-price-single">$6.000</div>
+                            </div>
+                            <button class="btn btn-add-cart btn-add-promo" onclick="agregarAlCarrito({nombre:'Promo 3x Completo/Italiano XL', precio:6000, cantidad:1, categoria:'Promos Vienesas'})">
+                                <i class="bi bi-cart-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-card menu-card-promo">
+                            <span class="promo-tag">🔥 PROMO</span>
+                            <div class="menu-card-body">
+                                <h5 class="menu-card-title">3x Dinámicos Normal</h5>
+                                <p class="menu-card-desc">Tamaño Normal</p>
+                                <div class="menu-card-price-single">$6.500</div>
+                            </div>
+                            <button class="btn btn-add-cart btn-add-promo" onclick="agregarAlCarrito({nombre:'Promo 3x Dinámico Normal', precio:6500, cantidad:1, categoria:'Promos Vienesas'})">
+                                <i class="bi bi-cart-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                    <div class="col-md-6 col-lg-4">
+                        <div class="menu-card menu-card-promo">
+                            <span class="promo-tag">🔥 PROMO</span>
+                            <div class="menu-card-body">
+                                <h5 class="menu-card-title">3x Dinámicos XL</h5>
+                                <p class="menu-card-desc">Tamaño XL</p>
+                                <div class="menu-card-price-single">$8.000</div>
+                            </div>
+                            <button class="btn btn-add-cart btn-add-promo" onclick="agregarAlCarrito({nombre:'Promo 3x Dinámico XL', precio:8000, cantidad:1, categoria:'Promos Vienesas'})">
+                                <i class="bi bi-cart-plus"></i> Agregar
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- ==================== SECCIÓN 2: CHURRASCOS ==================== -->
+            <section id="churrascos" class="menu-section">
+                <div class="menu-section-header">
+                    <span class="menu-section-emoji">🍔</span>
+                    <div>
+                        <h2 class="menu-section-title">Churrascos La Esquinita</h2>
+                        <p class="menu-section-desc">Churrasco vacuno a la plancha en pan artesanal</p>
+                    </div>
+                </div>
+                <div class="row g-4" id="churrascos-grid"></div>
+            </section>
+
+            <!-- ==================== SECCIÓN 3: ASS ==================== -->
+            <section id="ass" class="menu-section">
+                <div class="menu-section-header">
+                    <span class="menu-section-emoji">🥖</span>
+                    <div>
+                        <h2 class="menu-section-title">ASS - Sándwiches de Posta Rosada</h2>
+                        <p class="menu-section-desc">Posta rosada de primera calidad</p>
+                    </div>
+                </div>
+                <div class="row g-4" id="ass-grid"></div>
+            </section>
+
+            <!-- ==================== SECCIÓN 4: EMPANADAS ==================== -->
+            <section id="empanadas" class="menu-section">
+                <div class="menu-section-header">
+                    <span class="menu-section-emoji">🥟</span>
+                    <div>
+                        <h2 class="menu-section-title">Empanadas Fritas</h2>
+                        <p class="menu-section-desc">Empanadas fritas al momento, crocantes por fuera, jugosas por dentro</p>
+                    </div>
+                </div>
+                <div class="row g-4" id="empanadas-grid"></div>
+            </section>
+
+            <!-- ==================== SECCIÓN 5: PAPAS FRITAS ==================== -->
+            <section id="papas" class="menu-section">
+                <div class="menu-section-header">
+                    <span class="menu-section-emoji">🍟</span>
+                    <div>
+                        <h2 class="menu-section-title">Papas Fritas</h2>
+                        <p class="menu-section-desc">Papas fritas crocantes, ¡agrega lo que quieras!</p>
+                    </div>
+                </div>
+                <div class="row g-4" id="papas-grid"></div>
+            </section>
+
+            <!-- ==================== SECCIÓN 6: SALCHIPAPAS ==================== -->
+            <section id="salchipapas" class="menu-section">
+                <div class="menu-section-header">
+                    <span class="menu-section-emoji">🍟🌭</span>
+                    <div>
+                        <h2 class="menu-section-title">Salchipapas</h2>
+                        <p class="menu-section-desc">Papas fritas con vienesa, ¡un clásico!</p>
+                    </div>
+                </div>
+                <div class="row g-4" id="salchipapas-grid"></div>
+            </section>
+
+            <!-- ==================== SECCIÓN 7: CHORRILLANAS ==================== -->
+            <section id="chorrillanas" class="menu-section">
+                <div class="menu-section-header">
+                    <span class="menu-section-emoji">🫕</span>
+                    <div>
+                        <h2 class="menu-section-title">Chorrillanas La Esquinita</h2>
+                        <p class="menu-section-desc">Base de papas fritas, vienesas salteadas, huevo frito, cebolla acaramelizada & churrasco vacuno o pollo a la plancha</p>
+                    </div>
+                </div>
+                <div class="row g-4" id="chorrillanas-grid"></div>
+            </section>
+
+            <!-- ==================== SECCIÓN 8: FAJITAS ==================== -->
+            <section id="fajitas" class="menu-section">
+                <div class="menu-section-header">
+                    <span class="menu-section-emoji">🫔</span>
+                    <div>
+                        <h2 class="menu-section-title">Fajitas</h2>
+                        <p class="menu-section-desc">Tomate, palta, choclo, lechuga, mayo casera. Base a elegir: pollo, carne o champiñón</p>
+                    </div>
+                </div>
+                <div class="row g-4" id="fajitas-grid"></div>
+            </section>
+
+            <!-- ==================== SECCIÓN 9: SUPREMAS & PINCHOS ==================== -->
+            <section id="supremas" class="menu-section">
+                <div class="menu-section-header">
+                    <span class="menu-section-emoji">🧀</span>
+                    <div>
+                        <h2 class="menu-section-title">Supremas & Pinchos</h2>
+                        <p class="menu-section-desc">Nuestros platos más contundentes</p>
+                    </div>
+                </div>
+                <div class="row g-4" id="supremas-grid"></div>
+            </section>
+
+        </div>
+    </main>
+
+    <!-- FOOTER -->
+    <div id="footer-placeholder"></div>
+
+    <!-- BOTÓN FLOTANTE WHATSAPP -->
+    <a href="https://wa.me/56991754264?text=¡Hola!%20Quiero%20hacer%20un%20pedido%20🍔" 
+       class="whatsapp-float" target="_blank" title="¡Pide por WhatsApp!">
+        <i class="bi bi-whatsapp"></i>
+    </a>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/carrito.js"></script>
+    <script src="../js/whatsapp.js"></script>
+
+    <script>
+    /**
+     * =====================================================
+     *  MENU.JS — Lógica específica de la página del menú
+     * =====================================================
+     */
+
+    // ===== DATOS DEL MENÚ COMPLETO =====
+
+    const MENU_DATA = {
+        churrascos: [
+            { nombre: "Churrasco Italino", desc: "Churrasco vacuno, tomate, palta, mayo casera", precio: 3500, promo: "2x $6.000", precioPromo: 6000 },
+            { nombre: "Churrasco Chacarero", desc: "Churrasco vacuno, tomate, poroto verde, ají caprí, mayo casera", precio: 3500, promo: "2x $6.000", precioPromo: 6000 },
+            { nombre: "Churrasco Luco", desc: "Churrasco vacuno, queso (mayo casera opcional)", precio: 3500, promo: "2x $6.000", precioPromo: 6000 },
+            { nombre: "Churrasco Completo", desc: "Churrasco vacuno, tomate, americana, chucrut, mayo casera", precio: 3500, promo: "2x $6.000", precioPromo: 6000 },
+            { nombre: "Churrasco Brasileño", desc: "Churrasco vacuno, tomate, palta, queso, mayo casera", precio: 4000, promo: "2x $7.000", precioPromo: 7000 },
+            { nombre: "Churrasco Champiñón Queso", desc: "Churrasco vacuno, champiñón, queso (mayo casera opcional)", precio: 4000, promo: "2x $7.000", precioPromo: 7000 },
+            { nombre: "Churrasco A lo Pobre", desc: "Churrasco vacuno, cebolla acaramelizada, papas fritas, huevo frito", precio: 4000, promo: "2x $7.000", precioPromo: 7000 },
+            { nombre: "Churrasco Dinámico", desc: "Churrasco vacuno, tomate, palta, americana, chucrut, mayo casera", precio: 4000, promo: "2x $7.000", precioPromo: 7000 },
+            { nombre: "Churrasco Especial", desc: "Churrasco vacuno, palta, queso, mayo casera", precio: 4000, promo: "2x $7.000", precioPromo: 7000 },
+            { nombre: "Churrasco Glotón", desc: "Churrasco vacuno, tomate, palta, queso, tocino, mayo casera", precio: 4500, promo: "2x $8.000", precioPromo: 8000 }
+        ],
+        ass: [
+            { nombre: "ASS Italino", desc: "Posta rosada, tomate, palta, mayo casera", precioNormal: 2500, precioXL: 3000 },
+            { nombre: "ASS Completo", desc: "Posta rosada, tomate, americana, chucrut, mayo casera", precioNormal: 2500, precioXL: 3000 },
+            { nombre: "ASS Luco", desc: "Posta rosada, queso derretido a la plancha", precioNormal: 2500, precioXL: 3000 },
+            { nombre: "ASS Dinámico", desc: "Posta rosada, tomate, palta, chucrut, americana, mayo casera", precioNormal: 3000, precioXL: 3500 },
+            { nombre: "ASS Chacarero", desc: "Posta rosada, tomate, poroto verde, ají amarillo, mayo casera", precioNormal: 3000, precioXL: 3500 },
+            { nombre: "ASS Brasileño", desc: "Posta rosada, tomate, palta, queso derretido, mayo casera", precioNormal: 3000, precioXL: 3500 },
+            { nombre: "ASS Champiñón Queso", desc: "Posta rosada, champiñón salteado, queso derretido", precioNormal: 3000, precioXL: 3500 },
+            { nombre: "ASS Papapleto", desc: "Posta rosada, papas fritas, tomate, palta, mayo casera", precioNormal: 3000, precioXL: 3500 }
+        ],
+        empanadas: [
+            { nombre: "Pollo Queso Ciboulette", precio: 2000 },
+            { nombre: "Champiñón Queso", precio: 2000 },
+            { nombre: "Churrasco Queso", precio: 2000 },
+            { nombre: "Camarón Queso", precio: 2000 },
+            { nombre: "Choclo Queso", precio: 1800 },
+            { nombre: "Chaparrita", precio: 1800 },
+            { nombre: "Napolitana", precio: 1800 },
+            { nombre: "Jamón Queso", precio: 1800 },
+            { nombre: "Queso", precio: 1500 }
+        ],
+        papas: [
+            { nombre: "Papas Fritas Pequeña", precio: 1000 },
+            { nombre: "Papas Fritas Mediana", precio: 2000 },
+            { nombre: "Papas Fritas Grande", precio: 4000 },
+            { nombre: "Papas Fritas Extra Grande", precio: 7000 },
+            { nombre: "Agregado (churrasco, tocino, champiñones)", precio: 2000, esAgregado: true }
+        ],
+        salchipapas: [
+            { nombre: "Salchipapas Mediana", precio: 3000 },
+            { nombre: "Salchipapas Grande", precio: 5000 },
+            { nombre: "Salchipapas Extra Grande", precio: 8000 },
+            { nombre: "Agregado (tocino, churrasco, champiñones)", precio: 2000, esAgregado: true },
+            { nombre: "Agregado (palta, tomate, choclo, cebolla)", precio: 1000, esAgregado: true }
+        ],
+        chorrillanas: [
+            { nombre: "Chorrillana Individual", precio: 6000 },
+            { nombre: "Chorrillana para 2", precio: 11500 },
+            { nombre: "Chorrillana para 3", precio: 13500 },
+            { nombre: "Chorrillana Familiar", precio: 16500 }
+        ],
+        fajitas: [
+            { nombre: "Fajita (1 unidad)", precio: 4000 },
+            { nombre: "Fajitas (2 unidades)", precio: 7000 }
+        ],
+        supremas: [
+            { nombre: "Suprema Chica", desc: "Papas fritas, queso cheddar, ciboulette, tocino a la plancha", precio: 5500 },
+            { nombre: "Suprema Mediana", desc: "Papas fritas, queso cheddar, ciboulette, tocino a la plancha", precio: 8500 },
+            { nombre: "Suprema Grande", desc: "Papas fritas, queso cheddar, ciboulette, tocino a la plancha", precio: 10500 },
+            { nombre: "Pincho Chico", desc: "Papas fritas, vienesa frita, tomate, palta, mayo casera o normal", precio: 5500 },
+            { nombre: "Pincho Mediano", desc: "Papas fritas, vienesa frita, tomate, palta, mayo casera o normal", precio: 8500 },
+            { nombre: "Pincho Grande", desc: "Papas fritas, vienesa frita, tomate, palta, mayo casera o normal", precio: 10500 }
+        ]
+    };
+
+    // ===== RENDERIZAR SECCIONES DINÁMICAMENTE =====
+
+    document.addEventListener('DOMContentLoaded', function() {
+        renderChurrascos();
+        renderASS();
+        renderSimpleSection('empanadas', 'empanadas-grid', 'Empanadas Fritas');
+        renderSimpleSection('papas', 'papas-grid', 'Papas Fritas');
+        renderSimpleSection('salchipapas', 'salchipapas-grid', 'Salchipapas');
+        renderSimpleSection('chorrillanas', 'chorrillanas-grid', 'Chorrillanas');
+        renderSimpleSection('fajitas', 'fajitas-grid', 'Fajitas');
+        renderSimpleSection('supremas', 'supremas-grid', 'Supremas & Pinchos');
+        initCategoryScroll();
+    });
+
+    // --- Churrascos (con promo 2x) ---
+    function renderChurrascos() {
+        const grid = document.getElementById('churrascos-grid');
+        let html = '';
+        MENU_DATA.churrascos.forEach(item => {
+            html += `
+                <div class="col-md-6 col-lg-4">
+                    <div class="menu-card">
+                        <span class="promo-tag-sm">🔥 ${item.promo}</span>
+                        <div class="menu-card-body">
+                            <h5 class="menu-card-title">${item.nombre}</h5>
+                            <p class="menu-card-desc">${item.desc}</p>
+                            <div class="menu-card-price-single">${formatearPrecio(item.precio)}</div>
+                        </div>
+                        <div class="menu-card-actions">
+                            <button class="btn btn-add-cart" onclick="agregarAlCarrito({nombre:'${item.nombre.replace(/'/g, "\\'")}', precio:${item.precio}, cantidad:1, categoria:'Churrascos'})">
+                                <i class="bi bi-cart-plus"></i> Agregar 1
+                            </button>
+                            <button class="btn btn-add-cart btn-add-promo" onclick="agregarAlCarrito({nombre:'Promo 2x ${item.nombre.replace(/'/g, "\\'")}', precio:${item.precioPromo}, cantidad:1, categoria:'Promos Churrascos'})">
+                                <i class="bi bi-tag-fill"></i> ${item.promo}
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `;
+        });
+        grid.innerHTML = html;
+    }
+
+    // --- ASS (con Normal/XL) ---
+    function renderASS() {
+        const grid = document.getElementById('ass-grid');
+        let html = '';
+        MENU_DATA.ass.forEach(item => {
+            html += `
+                <div class="col-md-6 col-lg-4">
+                    <div class="menu-card">
+                        <div class="menu-card-body">
+                            <h5 class="menu-card-title">${item.nombre}</h5>
+                            <p class="menu-card-desc">${item.desc}</p>
+                            <div class="menu-card-sizes">
+                                <button class="size-btn active" data-price="${item.precioNormal}" onclick="selectSize(this)">Normal <strong>${formatearPrecio(item.precioNormal)}</strong></button>
+                                <button class="size-btn" data-price="${item.precioXL}" onclick="selectSize(this)">XL <strong>${formatearPrecio(item.precioXL)}</strong></button>
+                            </div>
+                        </div>
+                        <button class="btn btn-add-cart" onclick="addFromCard(this, '${item.nombre.replace(/'/g, "\\'")}', 'ASS')">
+                            <i class="bi bi-cart-plus"></i> Agregar
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        grid.innerHTML = html;
+    }
+
+    // --- Secciones simples (precio único) ---
+    function renderSimpleSection(key, gridId, categoria) {
+        const grid = document.getElementById(gridId);
+        if (!grid) return;
+        let html = '';
+        MENU_DATA[key].forEach(item => {
+            const isAgregado = item.esAgregado || false;
+            const desc = item.desc || '';
+            html += `
+                <div class="col-md-6 col-lg-4">
+                    <div class="menu-card ${isAgregado ? 'menu-card-agregado' : ''}">
+                        ${isAgregado ? '<span class="agregado-tag">➕ Agregado</span>' : ''}
+                        <div class="menu-card-body">
+                            <h5 class="menu-card-title">${item.nombre}</h5>
+                            ${desc ? `<p class="menu-card-desc">${desc}</p>` : ''}
+                            <div class="menu-card-price-single">${isAgregado ? '+' : ''}${formatearPrecio(item.precio)}</div>
+                        </div>
+                        <button class="btn btn-add-cart" onclick="agregarAlCarrito({nombre:'${item.nombre.replace(/'/g, "\\'")}', precio:${item.precio}, cantidad:1, categoria:'${categoria}'})">
+                            <i class="bi bi-cart-plus"></i> Agregar
+                        </button>
+                    </div>
+                </div>
+            `;
+        });
+        grid.innerHTML = html;
+    }
+
+    // ===== SIZE SELECTOR =====
+    function selectSize(btn) {
+        const parent = btn.closest('.menu-card-sizes');
+        parent.querySelectorAll('.size-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+    }
+
+    // ===== ADD FROM CARD (with size) =====
+    function addFromCard(btn, nombre, categoria) {
+        const card = btn.closest('.menu-card');
+        const activeSize = card.querySelector('.size-btn.active');
+        const precio = parseInt(activeSize.dataset.price);
+        const sizeLabel = activeSize.textContent.trim().split(' ')[0]; // "Normal" o "XL"
+        agregarAlCarrito({
+            nombre: `${nombre} (${sizeLabel})`,
+            precio: precio,
+            cantidad: 1,
+            categoria: categoria
+        });
+    }
+
+    // ===== CATEGORY SCROLL HIGHLIGHT =====
+    function initCategoryScroll() {
+        const pills = document.querySelectorAll('.category-pill');
+        const sections = document.querySelectorAll('.menu-section');
+
+        // Click handler para pills
+        pills.forEach(pill => {
+            pill.addEventListener('click', function(e) {
+                e.preventDefault();
+                const targetId = this.getAttribute('href').substring(1);
+                const target = document.getElementById(targetId);
+                if (target) {
+                    const offset = document.getElementById('categoryBar').offsetHeight + 
+                                   (document.getElementById('mainNavbar')?.offsetHeight || 0) + 10;
+                    window.scrollTo({
+                        top: target.offsetTop - offset,
+                        behavior: 'smooth'
+                    });
+                }
+            });
+        });
+
+        // Scroll spy
+        window.addEventListener('scroll', function() {
+            let current = '';
+            const offset = 200;
+            sections.forEach(section => {
+                const top = section.offsetTop - offset;
+                if (window.scrollY >= top) {
+                    current = section.getAttribute('id');
+                }
+            });
+            pills.forEach(pill => {
+                pill.classList.remove('active');
+                if (pill.getAttribute('data-cat') === current) {
+                    pill.classList.add('active');
+                    // Auto-scroll de la barra de pills
+                   
+                    scrollContainer.scrollTo({
+                    left: pillLeft - (containerWidth / 2) + (pillWidth / 2),
+                    behavior: 'smooth'});
+
+                }
+            });
+        });
+    }
+    </script>
+
+</body>
+</html>

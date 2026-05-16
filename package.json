@@ -1,0 +1,13 @@
+{
+  "name": "la-esquinita",
+  "version": "2.0.0",
+  "description": "Sitio web de La Esquinita - Comida Rápida al Paso, Renca",
+  "main": "index.html",
+  "scripts": {
+    "start": "npx live-server --port=3000 --open=index.html",
+    "dev": "npx live-server --port=3000 --open=index.html --wait=500"
+  },
+  "keywords": ["comida-rapida", "renca", "la-esquinita"],
+  "author": "La Esquinita Dev Team",
+  "license": "ISC"
+}
