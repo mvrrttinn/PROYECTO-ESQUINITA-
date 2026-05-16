@@ -1,0 +1,118 @@
+/* =====================================================
+   LA ESQUINITA - Estilos de Métodos de Pago (pago.css)
+   ===================================================== */
+
+/* Contenedor de opciones de pago */
+.pago-options {
+    display: flex;
+    gap: 10px;
+}
+
+.pago-option {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 16px 10px;
+    border: 2px solid #e0e0e0;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    background: #fff;
+}
+
+.pago-option:hover {
+    border-color: #FFB800;
+    background: rgba(255, 184, 0, 0.04);
+    transform: translateY(-2px);
+}
+
+.pago-selected {
+    border-color: #FFB800 !important;
+    background: rgba(255, 184, 0, 0.08) !important;
+    box-shadow: 0 0 15px rgba(255, 184, 0, 0.2);
+}
+
+.pago-icon {
+    font-size: 2rem;
+    margin-bottom: 6px;
+}
+
+.pago-name {
+    font-weight: 700;
+    font-size: 0.9rem;
+    color: #1A1A2E;
+    margin-bottom: 2px;
+}
+
+.pago-desc {
+    font-size: 0.7rem;
+    color: #6C757D;
+}
+
+/* Datos de transferencia */
+.transfer-info-card {
+    background: #FFF8E7;
+    border-left: 4px solid #FFB800;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 16px;
+    animation: fadeInUp 0.3s ease;
+}
+
+.transfer-info-card h6 {
+    font-weight: 700;
+    color: #1A1A2E;
+    margin-bottom: 12px;
+}
+
+.transfer-data {
+    margin-bottom: 12px;
+}
+
+.transfer-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    border-bottom: 1px dotted #ddd;
+    font-size: 0.85rem;
+}
+
+.transfer-row span {
+    color: #6C757D;
+}
+
+.transfer-row strong {
+    color: #1A1A2E;
+    font-size: 0.85rem;
+}
+
+.transfer-note {
+    font-size: 0.78rem;
+    color: #6C757D;
+    font-style: italic;
+    margin: 8px 0 0;
+}
+
+.transfer-note i {
+    color: #FFB800;
+}
+
+/* Responsive */
+@media (max-width: 575.98px) {
+    .pago-options {
+        flex-direction: column;
+    }
+    .pago-option {
+        flex-direction: row;
+        gap: 12px;
+        text-align: left;
+        padding: 12px 16px;
+    }
+    .pago-icon {
+        font-size: 1.5rem;
+        margin-bottom: 0;
+    }
+}

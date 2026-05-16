@@ -1,149 +1,98 @@
 /**
  * =====================================================
- *  LA ESQUINITA - Carrito de Compras (carrito.js)
- * =====================================================
- *  Lógica completa del carrito:
- *  - CRUD de productos en localStorage
- *  - Badge del navbar
- *  - Renderizado en la página del carrito
- *
- *  Depende de: app.js (CONFIG, mostrarNotificacion, formatearPrecio)
+ *  LA ESQUINITA - Carrito + Métodos de Pago (carrito.js)
  * =====================================================
  */
+
+const PAGO_KEY = 'esquinita_pago';
 
 // ===== BADGE DEL CARRITO =====
-/**
- * Actualiza el contador visual del carrito en el navbar.
- *
- * BUG FIX: Cuando hay 0 items, el badge se OCULTA
- * completamente (display: none). Cuando hay items,
- * se muestra con animación.
- */
 function updateCartBadge() {
-    const cartBadge = document.getElementById('cartCount');
-    if (!cartBadge) return;
-
+    const b = document.getElementById('cartCount'); if (!b) return;
     try {
-        const cart = JSON.parse(localStorage.getItem(CONFIG.storageKey)) || [];
-        const totalItems = cart.reduce((sum, item) => sum + (item.cantidad || 1), 0);
-
-        cartBadge.textContent = totalItems;
-
-        if (totalItems > 0) {
-            cartBadge.style.display = 'inline-flex';
-            cartBadge.classList.add('cart-badge-active');
-        } else {
-            // BUG FIX: Ocultar badge cuando es 0
-            cartBadge.style.display = 'none';
-            cartBadge.classList.remove('cart-badge-active');
-        }
-    } catch (error) {
-        cartBadge.style.display = 'none';
-    }
+        const c = JSON.parse(localStorage.getItem(CONFIG.storageKey)) || [];
+        const t = c.reduce((s, i) => s + (i.cantidad || 1), 0);
+        b.textContent = t;
+        if (t > 0) { b.style.display = 'inline-flex'; b.classList.add('cart-badge-active'); }
+        else { b.style.display = 'none'; b.classList.remove('cart-badge-active'); }
+    } catch (e) { b.style.display = 'none'; }
 }
 
-// ===== OBTENER CARRITO =====
-function obtenerCarrito() {
+// ===== CRUD CARRITO =====
+function obtenerCarrito() { try { return JSON.parse(localStorage.getItem(CONFIG.storageKey)) || []; } catch { return []; } }
+function guardarCarrito(c) { localStorage.setItem(CONFIG.storageKey, JSON.stringify(c)); updateCartBadge(); }
+
+function agregarAlCarrito(p) {
     try {
-        return JSON.parse(localStorage.getItem(CONFIG.storageKey)) || [];
-    } catch {
-        return [];
-    }
+        let c = obtenerCarrito();
+        const i = c.findIndex(x => x.nombre === p.nombre);
+        if (i > -1) c[i].cantidad += (p.cantidad || 1);
+        else c.push({ nombre: p.nombre, precio: p.precio, cantidad: p.cantidad || 1, categoria: p.categoria || 'General' });
+        guardarCarrito(c);
+        mostrarNotificacion(`✅ ${p.nombre} agregado al carrito`);
+    } catch (e) { console.error(e); }
 }
 
-// ===== GUARDAR CARRITO =====
-function guardarCarrito(cart) {
-    localStorage.setItem(CONFIG.storageKey, JSON.stringify(cart));
-    updateCartBadge();
+function eliminarDelCarrito(i) {
+    let c = obtenerCarrito(); const n = c[i]?.nombre || 'Producto';
+    c.splice(i, 1); guardarCarrito(c);
+    mostrarNotificacion(`🗑️ ${n} eliminado`); renderizarCarrito();
 }
 
-// ===== AGREGAR AL CARRITO =====
-/**
- * @param {Object} producto - { nombre, precio, cantidad, categoria }
- */
-function agregarAlCarrito(producto) {
-    try {
-        let cart = obtenerCarrito();
-
-        // Buscar si el producto ya existe
-        const existente = cart.findIndex(item => item.nombre === producto.nombre);
-
-        if (existente > -1) {
-            cart[existente].cantidad += (producto.cantidad || 1);
-        } else {
-            cart.push({
-                nombre: producto.nombre,
-                precio: producto.precio,
-                cantidad: producto.cantidad || 1,
-                categoria: producto.categoria || 'General'
-            });
-        }
-
-        guardarCarrito(cart);
-        mostrarNotificacion(`✅ ${producto.nombre} agregado al carrito`);
-
-    } catch (error) {
-        console.error('Error al agregar al carrito:', error);
-    }
+function actualizarCantidad(i, q) {
+    if (q <= 0) { eliminarDelCarrito(i); return; }
+    let c = obtenerCarrito(); c[i].cantidad = q; guardarCarrito(c); renderizarCarrito();
 }
 
-// ===== ELIMINAR DEL CARRITO =====
-function eliminarDelCarrito(index) {
-    try {
-        let cart = obtenerCarrito();
-        const nombre = cart[index]?.nombre || 'Producto';
-        cart.splice(index, 1);
-        guardarCarrito(cart);
-        mostrarNotificacion(`🗑️ ${nombre} eliminado del carrito`);
-        renderizarCarrito();
-    } catch (error) {
-        console.error('Error al eliminar del carrito:', error);
-    }
-}
-
-// ===== ACTUALIZAR CANTIDAD =====
-function actualizarCantidad(index, nuevaCantidad) {
-    try {
-        let cart = obtenerCarrito();
-
-        if (nuevaCantidad <= 0) {
-            eliminarDelCarrito(index);
-            return;
-        }
-
-        cart[index].cantidad = nuevaCantidad;
-        guardarCarrito(cart);
-        renderizarCarrito();
-    } catch (error) {
-        console.error('Error al actualizar cantidad:', error);
-    }
-}
-
-// ===== VACIAR CARRITO =====
 function vaciarCarrito() {
     localStorage.removeItem(CONFIG.storageKey);
-    updateCartBadge();
-    renderizarCarrito();
+    localStorage.removeItem(PAGO_KEY);
+    updateCartBadge(); renderizarCarrito();
     mostrarNotificacion('🗑️ Carrito vaciado');
 }
 
-// ===== CALCULAR TOTAL =====
-function calcularTotal() {
-    const cart = obtenerCarrito();
-    return cart.reduce((total, item) => total + (item.precio * item.cantidad), 0);
+function calcularTotal() { return obtenerCarrito().reduce((t, i) => t + (i.precio * i.cantidad), 0); }
+
+// ===== MÉTODO DE PAGO =====
+function seleccionarPago(metodo) {
+    localStorage.setItem(PAGO_KEY, metodo);
+
+    // Actualizar UI
+    document.querySelectorAll('.pago-option').forEach(el => el.classList.remove('pago-selected'));
+    const selected = document.querySelector(`.pago-option[data-pago="${metodo}"]`);
+    if (selected) selected.classList.add('pago-selected');
+
+    // Mostrar/ocultar datos de transferencia
+    const transferInfo = document.getElementById('transfer-info');
+    if (transferInfo) {
+        transferInfo.style.display = metodo === 'transferencia' ? 'block' : 'none';
+    }
+
+    // Actualizar texto del botón
+    const btnEnviar = document.getElementById('btn-enviar-pedido');
+    if (btnEnviar) {
+        const labels = {
+            efectivo: '💵 Enviar Pedido (Efectivo)',
+            debito: '💳 Enviar Pedido (Débito)',
+            transferencia: '🏦 Enviar Pedido (Transferencia)'
+        };
+        btnEnviar.innerHTML = `<i class="bi bi-whatsapp"></i> ${labels[metodo] || 'Enviar Pedido'}`;
+    }
 }
 
-// ===== RENDERIZAR CARRITO (página carrito.html) =====
-function renderizarCarrito() {
-    const container = document.getElementById('cart-container');
-    if (!container) return; // Solo ejecutar en carrito.html
+function obtenerMetodoPago() {
+    return localStorage.getItem(PAGO_KEY) || null;
+}
 
-    const cart = obtenerCarrito();
-    const total = calcularTotal();
+// ===== RENDERIZAR CARRITO =====
+function renderizarCarrito() {
+    const el = document.getElementById('cart-container'); if (!el) return;
+    const cart = obtenerCarrito(), total = calcularTotal();
+    const pagoActual = obtenerMetodoPago();
 
     // --- CARRITO VACÍO ---
     if (cart.length === 0) {
-        container.innerHTML = `
+        el.innerHTML = `
             <div class="cart-empty text-center py-5">
                 <div class="cart-empty-icon">🛒</div>
                 <h3 class="mt-3">Tu carrito está vacío</h3>
@@ -151,106 +100,108 @@ function renderizarCarrito() {
                 <a href="menu.html" class="btn btn-primary-custom btn-lg mt-3 px-5">
                     <i class="bi bi-book"></i> Ver Menú
                 </a>
-            </div>
-        `;
-
-        // Ocultar resumen
-        const summary = document.getElementById('cart-summary');
-        if (summary) summary.style.display = 'none';
-
+            </div>`;
+        const s = document.getElementById('cart-summary'); if (s) s.style.display = 'none';
         return;
     }
 
-    // --- CARRITO CON PRODUCTOS ---
-    let html = `
-        <div class="table-responsive">
-            <table class="table cart-table align-middle">
-                <thead>
-                    <tr>
-                        <th>Producto</th>
-                        <th class="text-center">Precio</th>
-                        <th class="text-center">Cantidad</th>
-                        <th class="text-center">Subtotal</th>
-                        <th class="text-center">Acción</th>
-                    </tr>
-                </thead>
-                <tbody>
-    `;
+    // --- TABLA DE PRODUCTOS ---
+    let h = `<div class="table-responsive"><table class="table cart-table align-middle">
+        <thead><tr><th>Producto</th><th class="text-center">Precio</th><th class="text-center">Cantidad</th>
+        <th class="text-center">Subtotal</th><th class="text-center"></th></tr></thead><tbody>`;
 
-    cart.forEach((item, index) => {
-        const subtotal = item.precio * item.cantidad;
-        html += `
-                    <tr class="cart-item-row">
-                        <td>
-                            <div class="cart-product-info">
-                                <strong>${item.nombre}</strong>
-                                <small class="text-muted d-block">${item.categoria}</small>
-                            </div>
-                        </td>
-                        <td class="text-center">${formatearPrecio(item.precio)}</td>
-                        <td class="text-center">
-                            <div class="quantity-controls">
-                                <button class="btn btn-sm btn-outline-secondary qty-btn" 
-                                        onclick="actualizarCantidad(${index}, ${item.cantidad - 1})">
-                                    <i class="bi bi-dash"></i>
-                                </button>
-                                <span class="qty-display">${item.cantidad}</span>
-                                <button class="btn btn-sm btn-outline-secondary qty-btn" 
-                                        onclick="actualizarCantidad(${index}, ${item.cantidad + 1})">
-                                    <i class="bi bi-plus"></i>
-                                </button>
-                            </div>
-                        </td>
-                        <td class="text-center fw-bold">${formatearPrecio(subtotal)}</td>
-                        <td class="text-center">
-                            <button class="btn btn-sm btn-outline-danger" 
-                                    onclick="eliminarDelCarrito(${index})" 
-                                    title="Eliminar">
-                                <i class="bi bi-trash3"></i>
-                            </button>
-                        </td>
-                    </tr>
-        `;
+    cart.forEach((item, i) => {
+        const sub = item.precio * item.cantidad;
+        h += `<tr class="cart-item-row">
+            <td><div class="cart-product-info"><strong>${item.nombre}</strong>
+                <small class="text-muted d-block">${item.categoria}</small></div></td>
+            <td class="text-center">${formatearPrecio(item.precio)}</td>
+            <td class="text-center"><div class="quantity-controls">
+                <button class="btn btn-sm btn-outline-secondary qty-btn" onclick="actualizarCantidad(${i},${item.cantidad - 1})"><i class="bi bi-dash"></i></button>
+                <span class="qty-display">${item.cantidad}</span>
+                <button class="btn btn-sm btn-outline-secondary qty-btn" onclick="actualizarCantidad(${i},${item.cantidad + 1})"><i class="bi bi-plus"></i></button>
+            </div></td>
+            <td class="text-center fw-bold">${formatearPrecio(sub)}</td>
+            <td class="text-center"><button class="btn btn-sm btn-outline-danger" onclick="eliminarDelCarrito(${i})"><i class="bi bi-trash3"></i></button></td>
+        </tr>`;
     });
+    h += `</tbody></table></div>`;
+    el.innerHTML = h;
 
-    html += `
-                </tbody>
-            </table>
-        </div>
-    `;
+    // --- SECCIÓN DE PAGO + RESUMEN ---
+    const s = document.getElementById('cart-summary');
+    if (s) {
+        s.style.display = 'block';
+        const isEfectivo = pagoActual === 'efectivo';
+        const isDebito = pagoActual === 'debito';
+        const isTransfer = pagoActual === 'transferencia';
 
-    container.innerHTML = html;
+        s.innerHTML = `
+        <div class="cart-summary-card">
+            <!-- MÉTODO DE PAGO -->
+            <h5 class="mb-3"><i class="bi bi-credit-card-2-front"></i> Método de Pago</h5>
 
-    // --- RESUMEN ---
-    const summary = document.getElementById('cart-summary');
-    if (summary) {
-        summary.style.display = 'block';
-        summary.innerHTML = `
-            <div class="cart-summary-card">
-                <h4 class="mb-3"><i class="bi bi-receipt"></i> Resumen del Pedido</h4>
-                <div class="summary-line">
-                    <span>Productos (${cart.reduce((s, i) => s + i.cantidad, 0)})</span>
-                    <span>${formatearPrecio(total)}</span>
+            <div class="pago-options mb-4">
+                <div class="pago-option ${isEfectivo ? 'pago-selected' : ''}" data-pago="efectivo" onclick="seleccionarPago('efectivo')">
+                    <span class="pago-icon">💵</span>
+                    <span class="pago-name">Efectivo</span>
+                    <span class="pago-desc">Pago al recibir</span>
                 </div>
-                <div class="summary-line">
-                    <span>Delivery</span>
-                    <span class="text-success">Consultar</span>
+                <div class="pago-option ${isDebito ? 'pago-selected' : ''}" data-pago="debito" onclick="seleccionarPago('debito')">
+                    <span class="pago-icon">💳</span>
+                    <span class="pago-name">Débito</span>
+                    <span class="pago-desc">Transbank al recibir</span>
                 </div>
-                <hr>
-                <div class="summary-line summary-total">
-                    <span>TOTAL</span>
-                    <span>${formatearPrecio(total)}</span>
+                <div class="pago-option ${isTransfer ? 'pago-selected' : ''}" data-pago="transferencia" onclick="seleccionarPago('transferencia')">
+                    <span class="pago-icon">🏦</span>
+                    <span class="pago-name">Transferencia</span>
+                    <span class="pago-desc">Depósito bancario</span>
                 </div>
-                <button class="btn btn-whatsapp w-100 btn-lg mt-4" onclick="enviarPedidoWhatsApp()">
-                    <i class="bi bi-whatsapp"></i> Enviar Pedido por WhatsApp
-                </button>
-                <button class="btn btn-outline-danger w-100 mt-2" onclick="vaciarCarrito()">
-                    <i class="bi bi-trash3"></i> Vaciar Carrito
-                </button>
-                <a href="menu.html" class="btn btn-outline-warning w-100 mt-2">
-                    <i class="bi bi-plus-circle"></i> Seguir Comprando
-                </a>
             </div>
-        `;
+
+            <!-- DATOS DE TRANSFERENCIA (visible solo si seleccionada) -->
+            <div id="transfer-info" class="transfer-info-card" style="display:${isTransfer ? 'block' : 'none'};">
+                <h6><i class="bi bi-bank"></i> Datos para Transferencia</h6>
+                <div class="transfer-data">
+                    <div class="transfer-row"><span>Banco</span><strong>BancoEstado</strong></div>
+                    <div class="transfer-row"><span>Tipo Cuenta</span><strong>Cuenta RUT / Vista</strong></div>
+                    <div class="transfer-row"><span>Nombre</span><strong>La Esquinita</strong></div>
+                    <div class="transfer-row"><span>RUT</span><strong>20.139.714-6</strong></div>
+                    <div class="transfer-row"><span>Email</span><strong>laesquinita@email.cl</strong></div>
+                </div>
+                <p class="transfer-note">
+                    <i class="bi bi-info-circle"></i> Envía el comprobante de transferencia junto con tu pedido por WhatsApp.
+                </p>
+            </div>
+
+            <hr>
+
+            <!-- RESUMEN -->
+            <h5 class="mb-3"><i class="bi bi-receipt"></i> Resumen del Pedido</h5>
+            <div class="summary-line">
+                <span>Productos (${cart.reduce((a, b) => a + b.cantidad, 0)})</span>
+                <span>${formatearPrecio(total)}</span>
+            </div>
+            <div class="summary-line">
+                <span>Delivery</span>
+                <span class="text-success">Consultar</span>
+            </div>
+            <hr>
+            <div class="summary-line summary-total">
+                <span>TOTAL</span>
+                <span>${formatearPrecio(total)}</span>
+            </div>
+
+            <!-- BOTONES -->
+            <button id="btn-enviar-pedido" class="btn btn-whatsapp w-100 btn-lg mt-4" onclick="enviarPedidoWhatsApp()">
+                <i class="bi bi-whatsapp"></i> ${pagoActual ? (pagoActual === 'efectivo' ? '💵 Enviar Pedido (Efectivo)' : pagoActual === 'debito' ? '💳 Enviar Pedido (Débito)' : '🏦 Enviar Pedido (Transferencia)') : 'Selecciona un método de pago'}
+            </button>
+            <button class="btn btn-outline-danger w-100 mt-2" onclick="vaciarCarrito()">
+                <i class="bi bi-trash3"></i> Vaciar Carrito
+            </button>
+            <a href="menu.html" class="btn btn-outline-warning w-100 mt-2">
+                <i class="bi bi-plus-circle"></i> Seguir Comprando
+            </a>
+        </div>`;
     }
 }
