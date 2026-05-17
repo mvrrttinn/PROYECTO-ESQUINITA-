@@ -10,35 +10,20 @@ const app = express();
 const PORT = process.env.PORT || 4000;
 const frontendPath = path.resolve(__dirname, '..');
 
-// ─── Debug: ver qué hay en cada carpeta ───
-console.log('📂 Frontend path:', frontendPath);
-try {
-    const contenido = fs.readdirSync(frontendPath);
-    console.log('📁 Raíz:', contenido);
-    ['pages', 'js', 'css', 'components'].forEach(carpeta => {
-        const ruta = path.join(frontendPath, carpeta);
-        if (fs.existsSync(ruta)) {
-            console.log(`  📂 ${carpeta}/`, fs.readdirSync(ruta));
-        } else {
-            console.log(`  ❌ ${carpeta}/ NO EXISTE`);
-        }
-    });
-} catch (e) {
-    console.error('Error en debug:', e.message);
+// ─── Debug temporal ───
+console.log('📂 Frontend:', frontendPath);
+console.log('📁 Raíz:', fs.readdirSync(frontendPath));
+const pagesPath = path.join(frontendPath, 'pages');
+if (fs.existsSync(pagesPath)) {
+    console.log('📂 pages/', fs.readdirSync(pagesPath));
+} else {
+    console.log('❌ pages/ NO EXISTE');
 }
 
 // ─── Middlewares ───
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// ─── Log de cada petición ───
-app.use((req, res, next) => {
-    const filePath = path.join(frontendPath, req.url.split('?')[0]);
-    const existe = fs.existsSync(filePath);
-    console.log(`📄 ${req.method} ${req.url} → ${existe ? '✅ existe' : '❌ no existe'} → ${filePath}`);
-    next();
-});
 
 // ─── API Routes ───
 app.use('/api/productos', require('./routes/productos'));
