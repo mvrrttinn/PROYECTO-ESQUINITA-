@@ -2,16 +2,43 @@
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
+const fs = require('fs');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
 const PORT = process.env.PORT || 4000;
+const frontendPath = path.resolve(__dirname, '..');
+
+// ─── Debug: ver qué hay en cada carpeta ───
+console.log('📂 Frontend path:', frontendPath);
+try {
+    const contenido = fs.readdirSync(frontendPath);
+    console.log('📁 Raíz:', contenido);
+    ['pages', 'js', 'css', 'components'].forEach(carpeta => {
+        const ruta = path.join(frontendPath, carpeta);
+        if (fs.existsSync(ruta)) {
+            console.log(`  📂 ${carpeta}/`, fs.readdirSync(ruta));
+        } else {
+            console.log(`  ❌ ${carpeta}/ NO EXISTE`);
+        }
+    });
+} catch (e) {
+    console.error('Error en debug:', e.message);
+}
 
 // ─── Middlewares ───
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
+// ─── Log de cada petición ───
+app.use((req, res, next) => {
+    const filePath = path.join(frontendPath, req.url.split('?')[0]);
+    const existe = fs.existsSync(filePath);
+    console.log(`📄 ${req.method} ${req.url} → ${existe ? '✅ existe' : '❌ no existe'} → ${filePath}`);
+    next();
+});
 
 // ─── API Routes ───
 app.use('/api/productos', require('./routes/productos'));
@@ -26,9 +53,9 @@ app.get('/api/health', (req, res) => {
 });
 
 // ─── Frontend estático ───
-const frontendPath = path.join(__dirname, '..');
 app.use(express.static(frontendPath));
 
+// ─── Catch-all ───
 app.get('*', (req, res) => {
     if (path.extname(req.url)) {
         return res.status(404).send('Archivo no encontrado');
@@ -39,7 +66,7 @@ app.get('*', (req, res) => {
 // ─── Error Handler ───
 app.use(errorHandler);
 
-// ─── Iniciar Servidor (UNA SOLA VEZ) ───
+// ─── Iniciar Servidor ───
 async function startServer() {
     try {
         await connectDB();
@@ -57,5 +84,4 @@ async function startServer() {
     }
 }
 
-// ─── SOLO UNA llamada ───
 startServer();
