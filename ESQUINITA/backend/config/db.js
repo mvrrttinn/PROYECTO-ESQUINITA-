@@ -23,10 +23,7 @@ async function connectDB() {
     console.log(`🔗 Intentando conectar a: ${uriSegura}`);
 
     try {
-        const conn = await mongoose.connect(resolvedUri, {
-            useNewUrlParser: true,
-            useUnifiedTopology: true,
-        });
+        const conn = await mongoose.connect(resolvedUri);
         console.log(`✅ MongoDB conectado: ${conn.connection.host}`);
         return;
     } catch (error) {

@@ -9,6 +9,10 @@ const app = express();
 const PORT = parseInt(process.env.PORT, 10) || 4000;
 const HOST = process.env.HOST || '0.0.0.0';
 
+app.listen(PORT, '0.0.0.0', () => {
+    console.log(`🚀 Servidor escuchando en http://${HOST}:${PORT}`);
+});
+
 app.set('trust proxy', 1);
 app.disable('x-powered-by');
 
