@@ -1,13 +1,4 @@
-﻿/**
- * Conexión a MongoDB usando Mongoose.
- * En producción (Render) usa MONGO_URI de las variables de entorno.
- * En desarrollo usa localhost como fallback.
- */
-
-require("node:dns").setServers(["1.1.1.1", "8.8.8.8"]);
-
-const mongoose = require('mongoose');
-// ... resto del código
+﻿require("node:dns").setServers(["1.1.1.1", "8.8.8.8"]);
 const mongoose = require('mongoose');
 
 mongoose.set('strictQuery', false);
@@ -18,7 +9,7 @@ async function connectDB() {
     const resolvedUri = connectionUri || (process.env.NODE_ENV === 'production' ? null : localUri);
 
     if (!resolvedUri) {
-        throw new Error('MONGO_URI no está definido. En producción debe proporcionarse la variable de entorno MONGO_URI.');
+        throw new Error('MONGO_URI no está definido.');
     }
 
     const uriSegura = resolvedUri.includes('@')
