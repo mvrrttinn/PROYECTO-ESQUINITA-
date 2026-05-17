@@ -1,4 +1,4 @@
-require('dotenv').config();
+﻿require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const path = require('path');
@@ -6,7 +6,11 @@ const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
-const PORT = process.env.PORT || 4000;
+const PORT = parseInt(process.env.PORT, 10) || 4000;
+const HOST = process.env.HOST || '0.0.0.0';
+
+app.set('trust proxy', 1);
+app.disable('x-powered-by');
 
 // ─── Middlewares ───
 app.use(cors());
@@ -57,13 +61,15 @@ app.get('*', (req, res) => {
 app.use(errorHandler);
 
 // ─── Iniciar Servidor ───
+let server;
 async function startServer() {
     try {
         await connectDB();
-        app.listen(PORT, '0.0.0.0', () => {
+        server = app.listen(PORT, HOST, () => {
             console.log('\n==================================================');
             console.log('🌭 LA ESQUINITA - Servidor Iniciado');
             console.log('==================================================');
+            console.log(`🌐 Host:       ${HOST}`);
             console.log(`🌐 Puerto:     ${PORT}`);
             console.log(`📂 Frontend:   ${frontendPath}`);
             console.log(`📡 API:        /api/health`);
@@ -74,5 +80,27 @@ async function startServer() {
         process.exit(1);
     }
 }
+
+function shutdown(signal) {
+    console.log(`\n🛑 Recibido ${signal}. Cerrando servidor...`);
+    if (server) {
+        server.close(() => {
+            console.log('✅ Servidor cerrado.');
+            process.exit(0);
+        });
+    } else {
+        process.exit(0);
+    }
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
+process.on('unhandledRejection', (reason) => {
+    console.error('❌ Unhandled Rejection:', reason);
+});
+process.on('uncaughtException', (error) => {
+    console.error('❌ Uncaught Exception:', error);
+    process.exit(1);
+});
 
 startServer();
