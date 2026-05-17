@@ -35,6 +35,8 @@ app.get('*', (req, res) => {
     }
     res.sendFile(path.join(frontendPath, 'index.html'));
 });
+const fs = require('fs');
+console.log('📂 Contenido de la raíz:', fs.readdirSync(frontendPath));
 
 // ─── Error Handler ───
 app.use(errorHandler);
