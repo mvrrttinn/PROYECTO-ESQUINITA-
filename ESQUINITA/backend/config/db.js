@@ -4,12 +4,16 @@
  * En desarrollo usa localhost como fallback.
  */
 
+require("node:dns").setServers(["1.1.1.1", "8.8.8.8"]);
+
+const mongoose = require('mongoose');
+// ... resto del código
 const mongoose = require('mongoose');
 
 mongoose.set('strictQuery', false);
 
 async function connectDB() {
-    const localUri = 'mongodb://127.0.0.1:27017/laesquinita';
+    const localUri = 'mongodb://127.0.0.1:27017/test';
     const connectionUri = process.env.MONGO_URI?.trim();
     const resolvedUri = connectionUri || (process.env.NODE_ENV === 'production' ? null : localUri);
 
