@@ -8,21 +8,6 @@ const errorHandler = require('./middleware/errorHandler');
 const app = express();
 const PORT = process.env.PORT || 4000;
 
-const fs = require('fs');
-const frontendPath = path.join(__dirname, '..');
-
-// ─── Debug completo ───
-console.log('📂 Frontend path:', frontendPath);
-const contenido = fs.readdirSync(frontendPath);
-console.log('📁 Raíz:', contenido);
-
-// Buscar la carpeta pages con cualquier nombre
-contenido.forEach(item => {
-    const ruta = path.join(frontendPath, item);
-    if (fs.statSync(ruta).isDirectory()) {
-        console.log(`  📂 ${item}/`, fs.readdirSync(ruta));
-    }
-});
 // ─── Middlewares ───
 app.use(cors());
 app.use(express.json());
