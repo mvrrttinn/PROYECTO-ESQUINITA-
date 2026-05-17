@@ -6,23 +6,12 @@ const connectDB = require('./config/db');
 const errorHandler = require('./middleware/errorHandler');
 
 const app = express();
-const PORT = parseInt(process.env.PORT, 10) || 4000;
-const HOST = process.env.HOST || '0.0.0.0';
-
-app.listen(PORT, '0.0.0.0', () => {
-    console.log(`🚀 Servidor escuchando en http://${HOST}:${PORT}`);
-});
-
-app.set('trust proxy', 1);
-app.disable('x-powered-by');
+const PORT = process.env.PORT || 4000;
 
 // ─── Middlewares ───
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-
-// ─── Ruta al frontend (un nivel arriba de backend/) ───
-const frontendPath = path.join(__dirname, '..');
 
 // ─── API Routes ───
 app.use('/api/productos', require('./routes/productos'));
@@ -33,50 +22,33 @@ app.use('/api/auth', require('./routes/auth'));
 app.use('/api/admin', require('./routes/admin'));
 app.use('/api/usuarios', require('./routes/usuarios'));
 app.get('/api/health', (req, res) => {
-    res.json({ 
-        status: 'OK', 
-        mensaje: 'La Esquinita Backend OK', 
-        timestamp: new Date().toISOString() 
-    });
+    res.json({ status: 'OK', mensaje: 'La Esquinita Backend OK', timestamp: new Date().toISOString() });
 });
 
-// ─── Archivos estáticos del frontend ───
-// Sirve CSS, JS, imágenes, y TODAS las páginas HTML
+// ─── Frontend estático ───
+const frontendPath = path.join(__dirname, '..');
 app.use(express.static(frontendPath));
 
-// ─── Log para debug (puedes quitarlo después) ───
-app.use((req, res, next) => {
-    console.log(`📄 Petición: ${req.method} ${req.url}`);
-    next();
-});
-
-// ─── Catch-all: SOLO para rutas que NO sean API ni archivos existentes ───
 app.get('*', (req, res) => {
-    // Si la ruta pide un archivo específico (.html, .css, .js, etc.)
-    // y no se encontró en static, devuelve 404
     if (path.extname(req.url)) {
         return res.status(404).send('Archivo no encontrado');
     }
-    // Si es una ruta sin extensión, devuelve index.html
     res.sendFile(path.join(frontendPath, 'index.html'));
 });
 
 // ─── Error Handler ───
 app.use(errorHandler);
 
-// ─── Iniciar Servidor ───
-let server;
+// ─── Iniciar Servidor (UNA SOLA VEZ) ───
 async function startServer() {
     try {
         await connectDB();
-        server = app.listen(PORT, HOST, () => {
+        app.listen(PORT, '0.0.0.0', () => {
             console.log('\n==================================================');
             console.log('🌭 LA ESQUINITA - Servidor Iniciado');
             console.log('==================================================');
-            console.log(`🌐 Host:       ${HOST}`);
-            console.log(`🌐 Puerto:     ${PORT}`);
-            console.log(`📂 Frontend:   ${frontendPath}`);
-            console.log(`📡 API:        /api/health`);
+            console.log(`🚀 Servidor escuchando en http://0.0.0.0:${PORT}`);
+            console.log(`📡 API: /api/health`);
             console.log('==================================================\n');
         });
     } catch (error) {
@@ -85,26 +57,5 @@ async function startServer() {
     }
 }
 
-function shutdown(signal) {
-    console.log(`\n🛑 Recibido ${signal}. Cerrando servidor...`);
-    if (server) {
-        server.close(() => {
-            console.log('✅ Servidor cerrado.');
-            process.exit(0);
-        });
-    } else {
-        process.exit(0);
-    }
-}
-
-process.on('SIGTERM', () => shutdown('SIGTERM'));
-process.on('SIGINT', () => shutdown('SIGINT'));
-process.on('unhandledRejection', (reason) => {
-    console.error('❌ Unhandled Rejection:', reason);
-});
-process.on('uncaughtException', (error) => {
-    console.error('❌ Uncaught Exception:', error);
-    process.exit(1);
-});
-
+// ─── SOLO UNA llamada ───
 startServer();
