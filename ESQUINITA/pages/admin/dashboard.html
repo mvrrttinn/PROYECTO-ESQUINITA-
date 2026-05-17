@@ -1,0 +1,109 @@
+<!DOCTYPE html><html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/admin.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<title>Dashboard | La Esquinita</title></head>
+<body class="admin-body">
+<div class="sidebar-overlay" id="overlay" onclick="toggleSB()"></div>
+<button class="sidebar-toggle" onclick="toggleSB()"><i class="bi bi-list"></i></button>
+<aside class="admin-sidebar" id="sidebar">
+ <div class="sidebar-brand"><span style="font-size:1.5rem">&#x1F32D;</span><h4 style="font-family:'Bangers',cursive;font-size:1.3rem;margin:6px 0 0;letter-spacing:1px">La <span style="color:#FFB800">Esquinita</span></h4></div>
+ <nav class="sidebar-nav">
+  <div class="sidebar-section">GESTI&Oacute;N</div>
+  <a href="dashboard.html" data-p="dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+  <a href="nuevo-pedido.html" data-p="nuevo-pedido"><i class="bi bi-plus-circle"></i> Nuevo Pedido</a>
+  <a href="pedidos.html" data-p="pedidos"><i class="bi bi-bag"></i> Pedidos <span class="nav-badge" id="bPend" style="display:none">0</span></a>
+  <div class="sidebar-section">INVENTARIO</div>
+  <a href="ingredientes.html" data-p="ingredientes"><i class="bi bi-box-seam"></i> Ingredientes</a>
+  <div class="sidebar-section">EQUIPO</div>
+  <a href="usuarios.html" data-p="usuarios"><i class="bi bi-people"></i> Usuarios</a>
+  <hr>
+  <a href="../../index.html"><i class="bi bi-globe"></i> Ir al Sitio</a>
+  <a href="#" onclick="logout()" class="text-danger"><i class="bi bi-box-arrow-left"></i> Cerrar Sesi&oacute;n</a>
+ </nav>
+</aside>
+<main class="admin-main">
+<div class="admin-topbar">
+ <h5><i class="bi bi-speedometer2" style="color:#FFB800"></i> Dashboard</h5>
+ <div class="topbar-right"><span id="aN">Admin</span> <span class="badge bg-warning text-dark" id="aR">admin</span> <span class="text-muted ms-2" id="aF"></span></div>
+</div>
+<div class="admin-content">
+ <div class="row g-3 mb-4">
+  <div class="col-sm-6 col-xl-3"><div class="stat-card sg"><div class="si"><i class="bi bi-cash-stack"></i></div><div class="si-info"><h6>Ventas Hoy</h6><h3 id="s1">$0</h3></div></div></div>
+  <div class="col-sm-6 col-xl-3"><div class="stat-card sb"><div class="si"><i class="bi bi-bag-check"></i></div><div class="si-info"><h6>Pedidos Hoy</h6><h3 id="s2">0</h3></div></div></div>
+  <div class="col-sm-6 col-xl-3"><div class="stat-card sp"><div class="si"><i class="bi bi-receipt"></i></div><div class="si-info"><h6>Ticket Promedio</h6><h3 id="s3">$0</h3></div></div></div>
+  <div class="col-sm-6 col-xl-3"><div class="stat-card sx" id="s4c"><div class="si"><i class="bi bi-exclamation-triangle"></i></div><div class="si-info"><h6>Alertas Stock</h6><h3 id="s4">0</h3></div></div></div>
+ </div>
+ <div class="row g-3 mb-4"><div class="col-lg-8"><div class="ac"><h6><i class="bi bi-bar-chart" style="color:#FFB800"></i> Ventas 7 D&iacute;as</h6><div style="height:260px"><canvas id="c1"></canvas></div></div></div><div class="col-lg-4"><div class="ac"><h6><i class="bi bi-pie-chart" style="color:#FFB800"></i> M&eacute;todo Pago</h6><div style="height:260px"><canvas id="c2"></canvas></div></div></div></div>
+ <div class="row g-3 mb-4"><div class="col-lg-12"><div class="ac"><h6><i class="bi bi-truck" style="color:#FFB800"></i> Configuraci&oacute;n Delivery Renca</h6><div class="row g-3 align-items-end"><div class="col-md-4"><label class="form-label">Tarifa delivery</label><div class="input-group"><span class="input-group-text">$</span><input id="input-delivery-fee" type="number" class="form-control" min="0" step="100" placeholder="Valor" /></div></div><div class="col-md-4"><div class="form-check form-switch"><input class="form-check-input" type="checkbox" id="chk-delivery-enabled"><label class="form-check-label" for="chk-delivery-enabled">Delivery activo</label></div><small class="text-muted">Solo delivery en Renca.</small></div><div class="col-md-4 text-end"><button class="btn btn-primary" onclick="guardarDeliveryConfig()">Guardar configuraci&oacute;n</button><div id="delivery-config-status" class="form-text text-success mt-2" style="display:none;">Guardado</div></div></div></div></div></div>
+ <div class="row g-3 mb-4"><div class="col-lg-6"><div class="ac"><h6><i class="bi bi-trophy" style="color:#FFB800"></i> Top 5 Productos Mes</h6><table class="table table-sm table-hover mb-0"><thead><tr><th>#</th><th>Producto</th><th class="text-end">Cant.</th><th class="text-end">Ingresos</th></tr></thead><tbody id="tTop"><tr><td colspan="4" class="text-center text-muted">...</td></tr></tbody></table></div></div>
+ <div class="col-lg-6"><div class="ac"><h6><i class="bi bi-calendar-month" style="color:#FFB800"></i> Resumen Mes</h6><div id="dMes" class="text-center py-4 text-muted">...</div></div></div></div>
+ <div class="ac mb-4"><h6><i class="bi bi-clock-history" style="color:#FFB800"></i> Pedidos Recientes</h6><div class="table-responsive"><table class="table table-sm table-hover mb-0"><thead><tr><th>#</th><th>Hora</th><th>Items</th><th class="text-end">Total</th><th>Pago</th><th>Estado</th><th>Acci&oacute;n</th></tr></thead><tbody id="tPed">...</tbody></table></div></div>
+ <div class="ac mb-4"><h6><i class="bi bi-people" style="color:#FFB800"></i> Equipo</h6><div class="table-responsive"><table class="table table-sm table-hover mb-0"><thead><tr><th>Nombre</th><th>Email</th><th>Rol</th><th>Estado</th></tr></thead><tbody id="tUsr">...</tbody></table></div></div>
+ <div class="ac mb-4" id="dAl" style="display:none"><h6 class="text-danger"><i class="bi bi-exclamation-triangle-fill"></i> Stock Bajo</h6><div class="table-responsive"><table class="table table-sm mb-0"><thead><tr><th>Ingrediente</th><th>Categor&iacute;a</th><th class="text-center">Actual</th><th class="text-center">M&iacute;nimo</th><th>Nivel</th></tr></thead><tbody id="tAl"></tbody></table></div></div>
+</div></main>
+<script>
+const API = (window.location.protocol.startsWith('http') ? window.location.origin : 'http://localhost:4000') + '/api';
+const TK = localStorage.getItem('le_token');
+const AD = JSON.parse(localStorage.getItem('le_admin')||'{}');
+if(!TK)location.href='login.html';
+function fp(n){return '$'+n.toLocaleString('es-CL')}
+function fh(d){return new Date(d).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})}
+function fd(d){return new Date(d).toLocaleDateString('es-CL')}
+async function af(u,o={}){const r=await fetch(API+u,{headers:{'Authorization':'Bearer '+TK,'Content-Type':'application/json'},...o});if(r.status===401){localStorage.clear();location.href='login.html';return null}return r.json()}
+function logout(){localStorage.removeItem('le_token');localStorage.removeItem('le_admin');location.href='login.html'}
+function toggleSB(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('active')}
+document.addEventListener('DOMContentLoaded',()=>{
+ const n=document.getElementById('aN');if(n)n.textContent=AD.nombre||'Admin';
+ const r=document.getElementById('aR');if(r)r.textContent=AD.rol||'admin';
+ const f=document.getElementById('aF');if(f)f.textContent=new Date().toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});
+ document.querySelectorAll('[data-p]').forEach(a=>a.classList.toggle('active',a.dataset.p===PAGE));
+ if(typeof init==='function')init();
+});
+const eL={pendiente:'\u23f3 Pendiente',confirmado:'\u2705 Confirmado',preparando:'\uD83D\uDD25 Preparando',en_camino:'\uD83D\uDEF5 En Camino',entregado:'\uD83D\uDCE6 Entregado',cancelado:'\u274c Cancelado'};
+const eC={pendiente:'badge-pendiente',confirmado:'badge-confirmado',preparando:'badge-preparando',en_camino:'badge-en_camino',entregado:'badge-entregado',cancelado:'badge-cancelado'};
+const eF=['pendiente','confirmado','preparando','en_camino','entregado'];
+</script>
+<script>
+const PAGE='dashboard';let ch1=null,ch2=null;
+async function init(){load();setInterval(load,30000)}
+async function load(){const d=await af('/admin/dashboard');if(!d)return;
+ document.getElementById('s1').textContent=fp(d.ventasHoy||0);document.getElementById('s2').textContent=d.pedidosHoy||0;document.getElementById('s3').textContent=fp(d.ticketPromedio||0);document.getElementById('s4').textContent=d.alertasStock||0;
+ document.getElementById('s4c').className='stat-card '+((d.alertasStock||0)>0?'sr':'sx');
+ const bp=document.getElementById('bPend');if(d.pedidosPendientes>0){bp.textContent=d.pedidosPendientes;bp.style.display='inline'}else bp.style.display='none';
+ const lb=d.ventasSemana.map(x=>x._id),vl=d.ventasSemana.map(x=>x.total);
+ if(ch1){ch1.data.labels=lb;ch1.data.datasets[0].data=vl;ch1.update()}else ch1=new Chart(document.getElementById('c1'),{type:'bar',data:{labels:lb,datasets:[{label:'Ventas',data:vl,backgroundColor:'rgba(255,184,0,.7)',borderColor:'#FFB800',borderWidth:2,borderRadius:8}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{callback:v=>fp(v)}}}}});
+ const pm=d.porMetodoPago||[];const pV=[0,0,0];pm.forEach(p=>{if(p._id==='efectivo')pV[0]=p.cantidad;if(p._id==='debito')pV[1]=p.cantidad;if(p._id==='transferencia')pV[2]=p.cantidad});
+ if(ch2){ch2.data.datasets[0].data=pV;ch2.update()}else ch2=new Chart(document.getElementById('c2'),{type:'doughnut',data:{labels:['Efectivo','Débito','Transfer.'],datasets:[{data:pV,backgroundColor:['#25D366','#4A90D9','#FFB800'],borderWidth:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+ const top=d.topProductos||[];document.getElementById('tTop').innerHTML=top.length?top.map((p,i)=>'<tr><td><span class="badge bg-warning text-dark">'+(i+1)+'</span></td><td>'+p._id+'</td><td class="text-end fw-bold">'+p.cantidad+'</td><td class="text-end">'+fp(p.ingresos)+'</td></tr>').join(''):'<tr><td colspan="4" class="text-center text-muted">Sin datos</td></tr>';
+ document.getElementById('dMes').innerHTML='<div class="row g-3"><div class="col-6"><div class="p-3 bg-light rounded"><h4 class="text-success mb-1">'+fp(d.ventasMes?.total||0)+'</h4><small class="text-muted">Ventas Mes</small></div></div><div class="col-6"><div class="p-3 bg-light rounded"><h4 class="text-primary mb-1">'+(d.ventasMes?.cantidad||0)+'</h4><small class="text-muted">Pedidos Mes</small></div></div></div>';
+ const ped=d.pedidosRecientes||[];document.getElementById('tPed').innerHTML=ped.length?ped.map(p=>{const it=p.productos.map(x=>x.cantidad+'x '+x.nombre).join(', ');const i=eF.indexOf(p.estado),s=i>=0&&i<eF.length-1?eF[i+1]:null;let a='—';if(p.estado!=='entregado'&&p.estado!=='cancelado'){a='<div class="btn-group btn-group-sm">';if(s)a+='<button class="btn btn-outline-success btn-sm" onclick="ce(\''+p._id+'\',\''+s+'\')">'+eL[s]+'</button>';a+='<button class="btn btn-outline-danger btn-sm" onclick="ce(\''+p._id+'\',\'cancelado\')">❌</button></div>'}return '<tr><td><code>'+(p.numeroPedido||'—')+'</code></td><td>'+fh(p.createdAt)+'</td><td><small>'+(it.length>40?it.substring(0,40)+'...':it)+'</small></td><td class="text-end fw-bold">'+fp(p.total)+'</td><td>'+(p.metodoPago||'')+'</td><td><span class="badge '+(eC[p.estado]||'bg-secondary')+'">'+eL[p.estado]+'</span></td><td>'+a+'</td></tr>'}).join(''):'<tr><td colspan="7" class="text-center text-muted">Sin pedidos</td></tr>';
+ const usr=d.usuarios||[];document.getElementById('tUsr').innerHTML=usr.length?usr.map(u=>'<tr><td><strong>'+u.nombre+'</strong></td><td>'+u.email+'</td><td>'+(u.rol==='admin'?'<span class="badge bg-warning text-dark">👑 Admin</span>':'<span class="badge bg-info">💼 Cajero</span>')+'</td><td>'+(u.activo?'<span class="badge bg-success">Activo</span>':'<span class="badge bg-danger">Inactivo</span>')+'</td></tr>').join(''):'<tr><td colspan="4" class="text-center text-muted">Sin usuarios</td></tr>';
+ if (d.deliveryConfig) {
+     const feeInput = document.getElementById('input-delivery-fee');
+     const enabledInput = document.getElementById('chk-delivery-enabled');
+     if (feeInput) feeInput.value = d.deliveryConfig.deliveryFeeRenca || 0;
+     if (enabledInput) enabledInput.checked = Boolean(d.deliveryConfig.deliveryEnabled);
+ }
+ const al=d.alertasDetalle||[];if(al.length){document.getElementById('dAl').style.display='block';document.getElementById('tAl').innerHTML=al.map(a=>{const p=a.stockMinimo>0?Math.round(a.stockActual/a.stockMinimo*100):0;const c=p<=25?'danger':p<=75?'warning':'success';return '<tr><td><strong>'+a.nombre+'</strong></td><td>'+(a.categoria||'')+'</td><td class="text-center">'+a.stockActual+' '+(a.unidad||'')+'</td><td class="text-center">'+a.stockMinimo+'</td><td><div class="progress" style="height:20px"><div class="progress-bar bg-'+c+'" style="width:'+Math.min(p,100)+'%">'+p+'%</div></div></td></tr>'}).join('')}else document.getElementById('dAl').style.display='none';
+}
+async function guardarDeliveryConfig(){
+    const feeInput = document.getElementById('input-delivery-fee');
+    const enabledInput = document.getElementById('chk-delivery-enabled');
+    const status = document.getElementById('delivery-config-status');
+    const payload = {
+        deliveryFeeRenca: Number(feeInput?.value || 0),
+        deliveryEnabled: enabledInput?.checked === true
+    };
+    const result = await af('/admin/config',{method:'PATCH',body:JSON.stringify(payload)});
+    if (result && status) {
+        status.style.display = 'block';
+        status.textContent = 'Guardado correctamente';
+        setTimeout(() => { status.style.display = 'none'; }, 3000);
+    }
+}
+async function ce(id,est){await af('/admin/pedido/'+id+'/estado',{method:'PATCH',body:JSON.stringify({estado:est})});load()}
+</script></body></html>

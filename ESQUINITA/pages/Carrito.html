@@ -71,7 +71,10 @@
 
     <script>
         // Renderizar carrito al cargar la página
-        document.addEventListener('DOMContentLoaded', function() {
+        document.addEventListener('DOMContentLoaded', async function() {
+            if (typeof cargarConfiguracionDelivery === 'function') {
+                await cargarConfiguracionDelivery();
+            }
             renderizarCarrito();
         });
     </script>

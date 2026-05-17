@@ -1,0 +1,71 @@
+<!DOCTYPE html><html lang="es"><head>
+<meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../../css/admin.css">
+<title>Ingredientes | La Esquinita</title></head>
+<body class="admin-body">
+<div class="sidebar-overlay" id="overlay" onclick="toggleSB()"></div>
+<button class="sidebar-toggle" onclick="toggleSB()"><i class="bi bi-list"></i></button>
+<aside class="admin-sidebar" id="sidebar">
+ <div class="sidebar-brand"><span style="font-size:1.5rem">&#x1F32D;</span><h4 style="font-family:'Bangers',cursive;font-size:1.3rem;margin:6px 0 0;letter-spacing:1px">La <span style="color:#FFB800">Esquinita</span></h4></div>
+ <nav class="sidebar-nav">
+  <div class="sidebar-section">GESTI&Oacute;N</div>
+  <a href="dashboard.html" data-p="dashboard"><i class="bi bi-speedometer2"></i> Dashboard</a>
+  <a href="nuevo-pedido.html" data-p="nuevo-pedido"><i class="bi bi-plus-circle"></i> Nuevo Pedido</a>
+  <a href="pedidos.html" data-p="pedidos"><i class="bi bi-bag"></i> Pedidos <span class="nav-badge" id="bPend" style="display:none">0</span></a>
+  <div class="sidebar-section">INVENTARIO</div>
+  <a href="ingredientes.html" data-p="ingredientes"><i class="bi bi-box-seam"></i> Ingredientes</a>
+  <div class="sidebar-section">EQUIPO</div>
+  <a href="usuarios.html" data-p="usuarios"><i class="bi bi-people"></i> Usuarios</a>
+  <hr>
+  <a href="../../index.html"><i class="bi bi-globe"></i> Ir al Sitio</a>
+  <a href="#" onclick="logout()" class="text-danger"><i class="bi bi-box-arrow-left"></i> Cerrar Sesi&oacute;n</a>
+ </nav>
+</aside>
+<main class="admin-main">
+<div class="admin-topbar">
+ <h5><i class="bi bi-box-seam" style="color:#FFB800"></i> Ingredientes</h5>
+ <div class="topbar-right"><span id="aN">Admin</span> <span class="badge bg-warning text-dark" id="aR">admin</span> <span class="text-muted ms-2" id="aF"></span></div>
+</div>
+<div class="admin-content">
+ <div class="ac"><h6><i class="bi bi-box-seam" style="color:#FFB800"></i> Control de Inventario</h6>
+ <div class="table-responsive"><table class="table table-sm table-hover mb-0"><thead><tr><th>Ingrediente</th><th>Categor&iacute;a</th><th class="text-center">Stock</th><th class="text-center">M&iacute;nimo</th><th>Unidad</th><th>Nivel</th><th>Acci&oacute;n</th></tr></thead><tbody id="tI">...</tbody></table></div></div>
+</div></main>
+<!-- Modal Stock -->
+<div class="modal fade" id="mStock" tabindex="-1"><div class="modal-dialog modal-sm"><div class="modal-content"><div class="modal-header"><h6 class="modal-title" id="mTitle">Ajustar Stock</h6><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body">
+ <div class="mb-3"><label class="form-label fw-semibold">Cantidad</label><input type="number" class="form-control" id="mQty" min="1" value="1"></div>
+ <div class="d-flex gap-2"><button class="btn btn-success flex-fill" onclick="ajStock('sumar')"><i class="bi bi-plus"></i> Sumar</button><button class="btn btn-danger flex-fill" onclick="ajStock('restar')"><i class="bi bi-dash"></i> Restar</button></div>
+</div></div></div></div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+const API = (window.location.protocol.startsWith('http') ? window.location.origin : 'http://localhost:4000') + '/api';
+const TK = localStorage.getItem('le_token');
+const AD = JSON.parse(localStorage.getItem('le_admin')||'{}');
+if(!TK)location.href='login.html';
+function fp(n){return '$'+n.toLocaleString('es-CL')}
+function fh(d){return new Date(d).toLocaleTimeString('es-CL',{hour:'2-digit',minute:'2-digit'})}
+function fd(d){return new Date(d).toLocaleDateString('es-CL')}
+async function af(u,o={}){const r=await fetch(API+u,{headers:{'Authorization':'Bearer '+TK,'Content-Type':'application/json'},...o});if(r.status===401){localStorage.clear();location.href='login.html';return null}return r.json()}
+function logout(){localStorage.removeItem('le_token');localStorage.removeItem('le_admin');location.href='login.html'}
+function toggleSB(){document.getElementById('sidebar').classList.toggle('open');document.getElementById('overlay').classList.toggle('active')}
+document.addEventListener('DOMContentLoaded',()=>{
+ const n=document.getElementById('aN');if(n)n.textContent=AD.nombre||'Admin';
+ const r=document.getElementById('aR');if(r)r.textContent=AD.rol||'admin';
+ const f=document.getElementById('aF');if(f)f.textContent=new Date().toLocaleDateString('es-CL',{weekday:'long',day:'numeric',month:'long'});
+ document.querySelectorAll('[data-p]').forEach(a=>a.classList.toggle('active',a.dataset.p===PAGE));
+ if(typeof init==='function')init();
+});
+const eL={pendiente:'\u23f3 Pendiente',confirmado:'\u2705 Confirmado',preparando:'\uD83D\uDD25 Preparando',en_camino:'\uD83D\uDEF5 En Camino',entregado:'\uD83D\uDCE6 Entregado',cancelado:'\u274c Cancelado'};
+const eC={pendiente:'badge-pendiente',confirmado:'badge-confirmado',preparando:'badge-preparando',en_camino:'badge-en_camino',entregado:'badge-entregado',cancelado:'badge-cancelado'};
+const eF=['pendiente','confirmado','preparando','en_camino','entregado'];
+</script>
+<script>
+const PAGE='ingredientes';let ingr=[],selId=null;
+async function init(){load()}
+async function load(){const d=await af('/ingredientes');if(!d)return;ingr=d.ingredientes||d||[];render()}
+function render(){const tb=document.getElementById('tI');tb.innerHTML=ingr.map(i=>{const p=i.stockMinimo>0?Math.round(i.stockActual/i.stockMinimo*100):100;const c=p<=25?'danger':p<=75?'warning':'success';return '<tr><td><strong>'+i.nombre+'</strong></td><td>'+( i.categoria||'')+'</td><td class="text-center fw-bold">'+i.stockActual+'</td><td class="text-center">'+i.stockMinimo+'</td><td>'+(i.unidad||'')+'</td><td><div class="progress" style="height:20px"><div class="progress-bar bg-'+c+'" style="width:'+Math.min(p,100)+'%">'+p+'%</div></div></td><td><button class="btn btn-sm btn-outline-warning" onclick="abrirM(\''+i._id+'\',\''+i.nombre+'\')"><i class="bi bi-pencil"></i></button></td></tr>'}).join('')}
+function abrirM(id,nm){selId=id;document.getElementById('mTitle').textContent='Ajustar: '+nm;document.getElementById('mQty').value=1;new bootstrap.Modal(document.getElementById('mStock')).show()}
+async function ajStock(op){if(!selId)return;const q=parseInt(document.getElementById('mQty').value)||1;await af('/ingredientes/'+selId+'/stock',{method:'PATCH',body:JSON.stringify({cantidad:q,operacion:op})});bootstrap.Modal.getInstance(document.getElementById('mStock')).hide();load()}
+</script></body></html>

@@ -36,6 +36,11 @@ const pedidoSchema = new mongoose.Schema({
         type: Boolean,
         default: false
     },
+    deliveryCosto: {
+        type: Number,
+        default: 0,
+        min: 0
+    },
     estado: {
         type: String,
         enum: ['pendiente', 'confirmado', 'preparando', 'en_camino', 'entregado', 'cancelado'],
@@ -45,7 +50,14 @@ const pedidoSchema = new mongoose.Schema({
         type: String,
         default: ''
     },
-    // Comprobante de transferencia (si aplica)
+    transferencia: {
+        banco: { type: String, default: 'BancoEstado' },
+        tipoCuenta: { type: String, default: 'Cuenta RUT / Vista' },
+        rut: { type: String, default: '' },
+        titular: { type: String, default: 'La Esquinita' },
+        referencia: { type: String, default: '' },
+        comprobanteUrl: { type: String, default: '' }
+    },
     comprobanteTransferencia: {
         type: Boolean,
         default: false

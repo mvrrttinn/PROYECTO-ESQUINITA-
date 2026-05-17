@@ -22,9 +22,11 @@ function errorHandler(err, req, res, next) {
     }
 
     // Error genérico
-    res.status(err.status || 500).json({
-        error: err.message || 'Error interno del servidor'
-    });
+    const status = err.status || 500;
+    const response = {
+        error: status >= 500 ? 'Error interno del servidor' : err.message || 'Error desconocido'
+    };
+    res.status(status).json(response);
 }
 
 module.exports = errorHandler;

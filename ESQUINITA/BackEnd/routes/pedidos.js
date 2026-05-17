@@ -37,15 +37,76 @@ router.get('/:id', async (req, res, next) => {
 // POST /api/pedidos — Crear nuevo pedido
 router.post('/', async (req, res, next) => {
     try {
-        const { productos, total, metodoPago, cliente, delivery, notas } = req.body;
+        const { productos, total, metodoPago, cliente = {}, delivery = false, notas = '', transferencia = {} } = req.body;
+        const metodosValidos = ['efectivo', 'debito', 'transferencia'];
 
-        if (!productos || productos.length === 0) {
+        if (!Array.isArray(productos) || productos.length === 0) {
             return res.status(400).json({ error: 'El pedido debe tener al menos un producto' });
         }
 
-        const pedido = await Pedido.create({
-            productos, total, metodoPago, cliente, delivery, notas
+        const productosValidados = productos.map((item, index) => {
+            if (!item || typeof item !== 'object') {
+                throw { status: 400, message: `Producto inválido en posición ${index + 1}` };
+            }
+            const nombre = String(item.nombre || '').trim();
+            const precio = Number(item.precio);
+            const cantidad = Number(item.cantidad);
+            const categoria = String(item.categoria || 'General').trim();
+
+            if (!nombre) throw { status: 400, message: `Nombre del producto requerido en posición ${index + 1}` };
+            if (Number.isNaN(precio) || precio < 0) throw { status: 400, message: `Precio inválido para ${nombre}` };
+            if (!Number.isInteger(cantidad) || cantidad <= 0) throw { status: 400, message: `Cantidad inválida para ${nombre}` };
+
+            return { nombre, precio, cantidad, categoria };
         });
+
+        const subtotal = productosValidados.reduce((sum, item) => sum + item.precio * item.cantidad, 0);
+        const totalPedido = Number(total);
+        const deliveryCosto = Number(req.body.deliveryCosto || 0);
+        if (Number.isNaN(totalPedido) || totalPedido < 0) {
+            return res.status(400).json({ error: 'Total inválido' });
+        }
+        if (Number.isNaN(deliveryCosto) || deliveryCosto < 0) {
+            return res.status(400).json({ error: 'Delivery costo inválido' });
+        }
+
+        const expectedTotal = subtotal + (delivery ? deliveryCosto : 0);
+        if (Math.round(totalPedido) !== Math.round(expectedTotal)) {
+            return res.status(400).json({ error: 'El total no coincide con la suma de los productos y delivery' });
+        }
+
+        if (!metodosValidos.includes(metodoPago)) {
+            return res.status(400).json({ error: `Método de pago inválido. Opciones: ${metodosValidos.join(', ')}` });
+        }
+
+        const clienteData = {
+            nombre: String(cliente.nombre || '').trim(),
+            telefono: String(cliente.telefono || '').trim(),
+            direccion: String(cliente.direccion || '').trim()
+        };
+
+        const pedidoData = {
+            productos: productosValidados,
+            total: totalPedido,
+            metodoPago,
+            cliente: clienteData,
+            delivery: Boolean(delivery),
+            deliveryCosto: delivery ? deliveryCosto : 0,
+            notas: String(notas || '').trim()
+        };
+
+        if (metodoPago === 'transferencia') {
+            pedidoData.transferencia = {
+                banco: 'BancoEstado',
+                tipoCuenta: 'Cuenta RUT / Vista',
+                rut: '',
+                titular: 'La Esquinita',
+                referencia: String(transferencia.referencia || '').trim(),
+                comprobanteUrl: String(transferencia.comprobanteUrl || '').trim()
+            };
+        }
+
+        const pedido = await Pedido.create(pedidoData);
 
         res.status(201).json({
             mensaje: '✅ Pedido creado exitosamente',

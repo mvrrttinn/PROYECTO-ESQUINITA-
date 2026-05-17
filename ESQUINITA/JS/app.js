@@ -11,9 +11,13 @@
 
 // ===== CONFIGURACIÓN GLOBAL =====
 const CONFIG = {
-    whatsappNumber: '56991754264',
+    whatsappNumber: '56982362728',
     whatsappMessage: '¡Hola! Quiero hacer un pedido 🍔',
-    storageKey: 'esquinita_cart'
+    storageKey: 'esquinita_cart',
+    apiBaseUrl: window.location.protocol.startsWith('http') ? window.location.origin : 'http://localhost:4000',
+    deliveryFeeRenca: 2000,
+    deliveryEnabled: true,
+    deliveryZone: 'Renca'
 };
 
 // ===== CARGA DINÁMICA DE COMPONENTES =====

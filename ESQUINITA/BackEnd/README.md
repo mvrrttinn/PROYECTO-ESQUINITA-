@@ -52,8 +52,16 @@ npm run dev             # Inicia con nodemon (desarrollo)
     { "nombre": "Churrasco Brasileño", "precio": 4000, "cantidad": 2, "categoria": "Churrascos" }
   ],
   "total": 8000,
-  "metodoPago": "efectivo",
+  "metodoPago": "transferencia",
   "cliente": { "nombre": "Juan", "telefono": "+56912345678", "direccion": "Calle 123, Renca" },
-  "delivery": true
+  "delivery": true,
+  "transferencia": {
+    "banco": "BancoEstado",
+    "tipoCuenta": "Cuenta RUT / Vista",
+    "rut": "",
+    "titular": "La Esquinita",
+    "referencia": "Pedido #LE-20260516-001",
+    "comprobanteUrl": "https://example.com/comprobante.jpg"
+  }
 }
 ```

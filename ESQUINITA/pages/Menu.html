@@ -285,7 +285,7 @@
     <div id="footer-placeholder"></div>
 
     <!-- BOTÓN FLOTANTE WHATSAPP -->
-    <a href="https://wa.me/56991754264?text=¡Hola!%20Quiero%20hacer%20un%20pedido%20🍔" 
+    <a href="https://wa.me/56982362728?text=¡Hola!%20Quiero%20hacer%20un%20pedido%20🍔" 
        class="whatsapp-float" target="_blank" title="¡Pide por WhatsApp!">
         <i class="bi bi-whatsapp"></i>
     </a>
@@ -527,10 +527,16 @@
                 if (pill.getAttribute('data-cat') === current) {
                     pill.classList.add('active');
                     // Auto-scroll de la barra de pills
-                   
-                    scrollContainer.scrollTo({
-                    left: pillLeft - (containerWidth / 2) + (pillWidth / 2),
-                    behavior: 'smooth'});
+                    const scrollContainer = document.getElementById('categoryBar');
+                    if (scrollContainer) {
+                        const containerWidth = scrollContainer.clientWidth;
+                        const pillLeft = pill.offsetLeft;
+                        const pillWidth = pill.offsetWidth;
+                        scrollContainer.scrollTo({
+                            left: pillLeft - (containerWidth / 2) + (pillWidth / 2),
+                            behavior: 'smooth'
+                        });
+                    }
 
                 }
             });

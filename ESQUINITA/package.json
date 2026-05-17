@@ -1,0 +1,15 @@
+{
+  "name": "la-esquinita",
+  "version": "2.0.0",
+  "description": "La Esquinita - Comida Rápida al Paso",
+  "scripts": {
+    "frontend": "npx live-server --port=3000 --open=index.html --ignore=backend,node_modules,.git",
+    "backend": "cd backend && npm run dev",
+    "dev": "npx concurrently \"npm run frontend\" \"npm run backend\"",
+    "start": "npm run frontend",
+    "install-backend": "cd backend && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

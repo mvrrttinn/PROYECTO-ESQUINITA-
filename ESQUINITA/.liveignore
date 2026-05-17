@@ -1,0 +1,9 @@
+backend/
+node_modules/
+.git/
+.env
+*.md
+package.json
+package-lock.json
+.gitignore
+.liveignore
